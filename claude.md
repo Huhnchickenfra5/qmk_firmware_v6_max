@@ -121,3 +121,10 @@ git submodule update --init --recursive
   ```
   SRC += custom_code.c
   ```
+
+### 10. Generic spammer architecture
+- All auto-key features use the `key_spammer_t` struct in `custom_code.c`
+- Config + runtime state in one struct: trigger keycode, target key, timing range, state machine
+- All spammers live in the `spammers[]` array — generic loops handle everything
+- To add a new spammer: add enum value in `custom_code.h` + new array entry in `custom_code.c`
+- Never write per-key logic — the array-driven design handles it
