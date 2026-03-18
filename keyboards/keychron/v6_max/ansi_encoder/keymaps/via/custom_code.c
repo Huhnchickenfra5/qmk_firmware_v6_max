@@ -136,4 +136,38 @@ void custom_code_task(void) {
     }
 }
 
+/* ========================================================================
+ * CUSTOM: RGB INDICATOR OVERRIDES
+ * ======================================================================== */
+
+#ifdef RGB_MATRIX_ENABLE
+/* CUSTOM: Override default lock-state indicators (weak in common/wireless/indicator.c).
+ * Sets 3 status LEDs with a cycling rainbow effect:
+ *   - Circle key (LED 16): rainbow when Q-spammer is active
+ *   - Caps Lock  (LED 61): rainbow when Caps Lock is ON
+ *   - Num Lock   (LED 37): rainbow when Num Lock is OFF (inverted)
+ */
+void os_state_indicate(void) {
+    /* CUSTOM: Time-based hue cycle — wraps 0-255 every ~6 seconds */
+    uint8_t hue = (timer_read() / 24) & 0xFF;
+    HSV hsv = {hue, 255, 255};
+    RGB rgb = hsv_to_rgb(hsv);
+
+    /* Circle key — spammer active indicator */
+    if (spammers[0].state != SPAM_IDLE) {
+        rgb_matrix_set_color(CIRCLE_KEY_LED_INDEX, rgb.r, rgb.g, rgb.b);
+    }
+
+    /* Caps Lock — lit when ON */
+    if (host_keyboard_led_state().caps_lock) {
+        rgb_matrix_set_color(CAPS_LOCK_INDEX, rgb.r, rgb.g, rgb.b);
+    }
+
+    /* Num Lock — lit when OFF (inverted: reminds user numpad is inactive) */
+    if (!host_keyboard_led_state().num_lock) {
+        rgb_matrix_set_color(NUM_LOCK_INDEX, rgb.r, rgb.g, rgb.b);
+    }
+}
+#endif // RGB_MATRIX_ENABLE
+
 #endif // CUSTOM_CODE_ENABLE

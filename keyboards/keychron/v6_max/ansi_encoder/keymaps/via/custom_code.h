@@ -10,6 +10,9 @@
 
 #include "keychron_common.h"
 
+/* CUSTOM: Circle key (F13) LED index — from g_led_config in ansi_encoder.c */
+#define CIRCLE_KEY_LED_INDEX 16
+
 /* CUSTOM: Custom keycodes — must start from NEW_SAFE_RANGE
  * (defined in keychron_common.h) to avoid collisions with Keychron's range. */
 enum custom_keycodes {
